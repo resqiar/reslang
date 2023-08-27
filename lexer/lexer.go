@@ -1,6 +1,8 @@
 package lexer
 
-import "reslang/token"
+import (
+	"reslang/token"
+)
 
 type Lexer struct {
 	input      string
@@ -31,8 +33,39 @@ func (l *Lexer) read() {
 	l.readPos += 1
 }
 
-func (l *Lexer) NextToken() token.Token {
+func (l *Lexer) readKeyword() string {
+	lastPos := l.currentPos
+
+	// fast forward until find a letter which is not azAZ_
+	for isLetter(l.char) {
+		l.read()
+	}
+
+	return l.input[lastPos:l.currentPos]
+}
+
+func (l *Lexer) readNumber() string {
+	lastPos := l.currentPos
+
+	// fast forward until find a letter which is not 0-9
+	for isNumber(l.char) {
+		l.read()
+	}
+
+	return l.input[lastPos:l.currentPos]
+}
+
+func (l *Lexer) skipWhitespace() {
+	for l.char == ' ' || l.char == '\t' || l.char == '\n' || l.char == '\r' {
+		l.read()
+	}
+}
+
+func (l *Lexer) Parse() token.Token {
 	var t token.Token
+
+	// skip whitespace, tab, enter, etc
+	l.skipWhitespace()
 
 	switch l.char {
 	case '=':
@@ -55,7 +88,26 @@ func (l *Lexer) NextToken() token.Token {
 		t.Literal = ""
 		t.Type = token.EOF
 	default:
-		t = newToken(token.ILLEGAL, l.char)
+		if isLetter(l.char) {
+			// read identifiers until it finds non-match azAZ_ character
+			t.Literal = l.readKeyword()
+
+			// lookup the type of the keyword
+			t.Type = token.LookupKeyword(t.Literal)
+
+			// return here is necessary to skip the l.read() below
+			// we already did the l.read() repeatly in LookupKeyword.
+			return t
+		} else if isNumber(l.char) {
+			// read identifiers until it finds non-numeric character
+			t.Literal = l.readNumber()
+			t.Type = token.INT
+
+			return t
+		} else {
+			// else, return ILLEGAL characters
+			t = newToken(token.ILLEGAL, l.char)
+		}
 	}
 
 	l.read()
@@ -64,4 +116,13 @@ func (l *Lexer) NextToken() token.Token {
 
 func newToken(tokenType token.TokenType, char byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(char)}
+}
+
+func isLetter(char byte) bool {
+	// return true if char is within a-zA-Z_
+	return (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') || (char == '_')
+}
+
+func isNumber(char byte) bool {
+	return char >= '0' && char <= '9'
 }
