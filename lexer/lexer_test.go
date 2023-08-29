@@ -1,38 +1,16 @@
 package lexer
 
 import (
+	"os"
 	"reslang/token"
 	"testing"
 )
 
 func TestLexer(t *testing.T) {
-	input := `
-	let one = 1;
-	let two = 2;
-
-	let sum = fn(a, b) {
-		return a + b;
+	raw, err := os.ReadFile("../index.rsq")
+	if err != nil {
+		t.Fatal(err)
 	}
-
-	let result = sum(one, two);
-
-	!-/*5;
-	5 < 10 > 5;
-
-	if (result < 10) {
-		result = sum(result * 100);
-	}
-
-	let foreverFalse = false;
-
-	if(5 < 10) {
-		return true;
-	} else if(10 > 5) {
-		return false;
-	} else {
-		return false;
-	}
-	`
 
 	tests := []struct {
 		expectedType    token.TokenType
@@ -167,7 +145,7 @@ func TestLexer(t *testing.T) {
 		{token.EOF, ""},
 	}
 
-	lexer := New(input)
+	lexer := New(string(raw))
 
 	for _, v := range tests {
 		token := lexer.Parse()

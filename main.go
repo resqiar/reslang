@@ -9,27 +9,12 @@ import (
 )
 
 func main() {
-	code := `
-	let one = 1;
-	let two = 2;
+	raw, err := os.ReadFile("index.rsq")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	let sum = fn(a, b) {
-		return a + b;
-	};
-
-	let result = sum(one, two);
-
-	!-/*5;
-	5 < 10 > 5;
-
-	if (result < 10) {
-		result = sum(result * 100);
-	};
-
-	let foreverFalse = false;
-	`
-
-	var l *lexer.Lexer = lexer.New(code)
+	var l *lexer.Lexer = lexer.New(string(raw))
 
 	// create a file
 	file, err := os.Create("parsed.txt")
