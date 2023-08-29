@@ -7,8 +7,14 @@ import (
 
 func TestLexer(t *testing.T) {
 	input := `
-	let five = 5;
-	let ten_thousand = 10000;
+	let one = 1;
+	let two = 2;
+
+	let sum = fn(a, b) {
+		a + b;
+	};
+
+	let result = sum(one, two);
 	`
 
 	tests := []struct {
@@ -16,15 +22,43 @@ func TestLexer(t *testing.T) {
 		expectedLiteral string
 	}{
 		{token.LET, "let"},
-		{token.IDENT, "five"},
+		{token.IDENT, "one"},
 		{token.ASSIGN, "="},
-		{token.INT, "5"},
+		{token.INT, "1"},
 		{token.SEMICOLON, ";"},
 
 		{token.LET, "let"},
-		{token.IDENT, "ten_thousand"},
+		{token.IDENT, "two"},
 		{token.ASSIGN, "="},
-		{token.INT, "10000"},
+		{token.INT, "2"},
+		{token.SEMICOLON, ";"},
+
+		{token.LET, "let"},
+		{token.IDENT, "sum"},
+		{token.ASSIGN, "="},
+		{token.FUNCTION, "fn"},
+		{token.LPAREN, "("},
+		{token.IDENT, "a"},
+		{token.COMMA, ","},
+		{token.IDENT, "b"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.IDENT, "a"},
+		{token.PLUS, "+"},
+		{token.IDENT, "b"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+		{token.SEMICOLON, ";"},
+
+		{token.LET, "let"},
+		{token.IDENT, "result"},
+		{token.ASSIGN, "="},
+		{token.IDENT, "sum"},
+		{token.LPAREN, "("},
+		{token.IDENT, "one"},
+		{token.COMMA, ","},
+		{token.IDENT, "two"},
+		{token.RPAREN, ")"},
 		{token.SEMICOLON, ";"},
 
 		{token.EOF, ""},

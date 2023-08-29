@@ -9,13 +9,14 @@ import (
 
 func main() {
 	code := `
-	let five = 5;
-	let ten_thousand = 10000;
-	let hundred = 100;
+	let one = 1;
+	let two = 2;
 
-    fn sum() {
-        return five + hundred;
-    }
+	let sum = fn(a, b) {
+		a + b;
+	};
+
+	let result = sum(one, two);
 	`
 
 	var l *lexer.Lexer = lexer.New(code)
