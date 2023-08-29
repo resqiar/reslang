@@ -12,30 +12,48 @@ func TestLexer(t *testing.T) {
 
 	let sum = fn(a, b) {
 		return a + b;
-	};
+	}
 
 	let result = sum(one, two);
 
 	!-/*5;
 	5 < 10 > 5;
+
+	if (result < 10) {
+		result = sum(result * 100);
+	}
+
+	let foreverFalse = false;
+
+	if(5 < 10) {
+		return true;
+	} else if(10 > 5) {
+		return false;
+	} else {
+		return false;
+	}
 	`
 
 	tests := []struct {
 		expectedType    token.TokenType
 		expectedLiteral string
 	}{
+		// let one = 1;
+		// let two = 2;
 		{token.LET, "let"},
 		{token.IDENT, "one"},
 		{token.ASSIGN, "="},
 		{token.INT, "1"},
 		{token.SEMICOLON, ";"},
-
 		{token.LET, "let"},
 		{token.IDENT, "two"},
 		{token.ASSIGN, "="},
 		{token.INT, "2"},
 		{token.SEMICOLON, ";"},
 
+		// let sum = fn(a, b) {
+		// 	return a + b;
+		// }
 		{token.LET, "let"},
 		{token.IDENT, "sum"},
 		{token.ASSIGN, "="},
@@ -52,8 +70,8 @@ func TestLexer(t *testing.T) {
 		{token.IDENT, "b"},
 		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
-		{token.SEMICOLON, ";"},
 
+		// let result = sum(one, two);
 		{token.LET, "let"},
 		{token.IDENT, "result"},
 		{token.ASSIGN, "="},
@@ -65,6 +83,7 @@ func TestLexer(t *testing.T) {
 		{token.RPAREN, ")"},
 		{token.SEMICOLON, ";"},
 
+		// !-/*5;
 		{token.BANG, "!"},
 		{token.MINUS, "-"},
 		{token.SLASH, "/"},
@@ -72,12 +91,78 @@ func TestLexer(t *testing.T) {
 		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
 
+		// 5 < 10 > 5;
 		{token.INT, "5"},
 		{token.LTHAN, "<"},
 		{token.INT, "10"},
 		{token.GTHAN, ">"},
 		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
+
+		// if (result < 10) {
+		// 	result = sum(result * 100);
+		// }
+		{token.IF, "if"},
+		{token.LPAREN, "("},
+		{token.IDENT, "result"},
+		{token.LTHAN, "<"},
+		{token.INT, "10"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.IDENT, "result"},
+		{token.ASSIGN, "="},
+		{token.IDENT, "sum"},
+		{token.LPAREN, "("},
+		{token.IDENT, "result"},
+		{token.ASTERISK, "*"},
+		{token.INT, "100"},
+		{token.RPAREN, ")"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+
+		// let foreverFalse = false;
+		{token.LET, "let"},
+		{token.IDENT, "foreverFalse"},
+		{token.ASSIGN, "="},
+		{token.FALSE, "false"},
+		{token.SEMICOLON, ";"},
+
+		// if(5 < 10) {
+		// 	return true;
+		// } else if(10 > 5) {
+		// 	return false;
+		// } else {
+		// 	return false;
+		// }
+		{token.IF, "if"},
+		{token.LPAREN, "("},
+		{token.INT, "5"},
+		{token.LTHAN, "<"},
+		{token.INT, "10"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
+		{token.TRUE, "true"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+		{token.ELSE, "else"},
+		{token.IF, "if"},
+		{token.LPAREN, "("},
+		{token.INT, "10"},
+		{token.GTHAN, ">"},
+		{token.INT, "5"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
+		{token.FALSE, "false"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+		{token.ELSE, "else"},
+		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
+		{token.FALSE, "false"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
 
 		{token.EOF, ""},
 	}
