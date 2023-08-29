@@ -11,8 +11,12 @@ const (
 	INT   = "INT"
 
 	// operators
-	ASSIGN = "="
-	PLUS   = "+"
+	ASSIGN   = "="
+	PLUS     = "+"
+	MINUS    = "-"
+	BANG     = "!"
+	ASTERISK = "*"
+	SLASH    = "/"
 
 	COMMA     = ","
 	SEMICOLON = ";"
@@ -21,6 +25,8 @@ const (
 	RPAREN = ")"
 	LBRACE = "{"
 	RBRACE = "}"
+	LTHAN  = "<"
+	GTHAN  = ">"
 
 	// keywords
 	FUNCTION = "FUNCTION"

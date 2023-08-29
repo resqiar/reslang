@@ -11,10 +11,13 @@ func TestLexer(t *testing.T) {
 	let two = 2;
 
 	let sum = fn(a, b) {
-		a + b;
+		return a + b;
 	};
 
 	let result = sum(one, two);
+
+	!-/*5;
+	5 < 10 > 5;
 	`
 
 	tests := []struct {
@@ -43,6 +46,7 @@ func TestLexer(t *testing.T) {
 		{token.IDENT, "b"},
 		{token.RPAREN, ")"},
 		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
 		{token.IDENT, "a"},
 		{token.PLUS, "+"},
 		{token.IDENT, "b"},
@@ -59,6 +63,20 @@ func TestLexer(t *testing.T) {
 		{token.COMMA, ","},
 		{token.IDENT, "two"},
 		{token.RPAREN, ")"},
+		{token.SEMICOLON, ";"},
+
+		{token.BANG, "!"},
+		{token.MINUS, "-"},
+		{token.SLASH, "/"},
+		{token.ASTERISK, "*"},
+		{token.INT, "5"},
+		{token.SEMICOLON, ";"},
+
+		{token.INT, "5"},
+		{token.LTHAN, "<"},
+		{token.INT, "10"},
+		{token.GTHAN, ">"},
+		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
 
 		{token.EOF, ""},

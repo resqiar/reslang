@@ -72,6 +72,15 @@ func (l *Lexer) Parse() token.Token {
 		t = newToken(token.ASSIGN, l.char)
 	case '+':
 		t = newToken(token.PLUS, l.char)
+	case '-':
+		t = newToken(token.MINUS, l.char)
+	case '!':
+		t = newToken(token.BANG, l.char)
+	case '*':
+		t = newToken(token.ASTERISK, l.char)
+	case '/':
+		t = newToken(token.SLASH, l.char)
+
 	case '(':
 		t = newToken(token.LPAREN, l.char)
 	case ')':
@@ -80,6 +89,10 @@ func (l *Lexer) Parse() token.Token {
 		t = newToken(token.LBRACE, l.char)
 	case '}':
 		t = newToken(token.RBRACE, l.char)
+	case '<':
+		t = newToken(token.LTHAN, l.char)
+	case '>':
+		t = newToken(token.GTHAN, l.char)
 	case ',':
 		t = newToken(token.COMMA, l.char)
 	case ';':
