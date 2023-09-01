@@ -5,10 +5,19 @@ import (
 	"log"
 	"os"
 	"reslang/lexer"
+	"reslang/repl"
 	"runtime"
 )
 
 func main() {
+	args := os.Args[1:]
+	for _, v := range args {
+		if v == "--repl" {
+			repl.Start(os.Stdin, os.Stdout)
+			return
+		}
+	}
+
 	raw, err := os.ReadFile("index.rsq")
 	if err != nil {
 		log.Fatal(err)
