@@ -28,6 +28,11 @@ const (
 	LTHAN  = "<"
 	GTHAN  = ">"
 
+	EQUAL      = "=="
+	NOTEQUAL   = "!="
+	LTHANEQUAL = "<="
+	GTHANEQUAL = ">="
+
 	// keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"

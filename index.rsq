@@ -23,3 +23,15 @@ if(5 < 10) {
 } else {
     return false;
 }
+
+if(foreverFalse != true) {
+    return false;
+} else {
+    return true;
+}
+
+!=
+==
+<=
+>=
+=

@@ -61,6 +61,15 @@ func (l *Lexer) skipWhitespace() {
 	}
 }
 
+func (l *Lexer) peekReadPos() byte {
+	// if readPos reaching EOF
+	if l.readPos >= len(l.input) {
+		return 0
+	}
+
+	return l.input[l.readPos]
+}
+
 func (l *Lexer) Parse() token.Token {
 	var t token.Token
 
@@ -69,13 +78,27 @@ func (l *Lexer) Parse() token.Token {
 
 	switch l.char {
 	case '=':
-		t = newToken(token.ASSIGN, l.char)
+		if l.peekReadPos() == '=' {
+			t.Literal = string(l.char) + string(l.input[l.readPos])
+			t.Type = token.EQUAL
+
+			l.read()
+		} else {
+			t = newToken(token.ASSIGN, l.char)
+		}
 	case '+':
 		t = newToken(token.PLUS, l.char)
 	case '-':
 		t = newToken(token.MINUS, l.char)
 	case '!':
-		t = newToken(token.BANG, l.char)
+		if l.peekReadPos() == '=' {
+			t.Literal = string(l.char) + string(l.input[l.readPos])
+			t.Type = token.NOTEQUAL
+
+			l.read()
+		} else {
+			t = newToken(token.BANG, l.char)
+		}
 	case '*':
 		t = newToken(token.ASTERISK, l.char)
 	case '/':
@@ -90,9 +113,23 @@ func (l *Lexer) Parse() token.Token {
 	case '}':
 		t = newToken(token.RBRACE, l.char)
 	case '<':
-		t = newToken(token.LTHAN, l.char)
+		if l.peekReadPos() == '=' {
+			t.Literal = string(l.char) + string(l.input[l.readPos])
+			t.Type = token.LTHANEQUAL
+
+			l.read()
+		} else {
+			t = newToken(token.LTHAN, l.char)
+		}
 	case '>':
-		t = newToken(token.GTHAN, l.char)
+		if l.peekReadPos() == '=' {
+			t.Literal = string(l.char) + string(l.input[l.readPos])
+			t.Type = token.GTHANEQUAL
+
+			l.read()
+		} else {
+			t = newToken(token.GTHAN, l.char)
+		}
 	case ',':
 		t = newToken(token.COMMA, l.char)
 	case ';':
