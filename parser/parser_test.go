@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"log"
 	"reslang/ast"
 	"reslang/lexer"
 	"testing"
@@ -8,8 +9,6 @@ import (
 
 func TestLetStatements(t *testing.T) {
 	input := `
-		let x = 9;
-		let fa;
 		let firstNumber = 5;
 		let secondNumber = 15;
 		let sum = firstNumber + secondNumber;
@@ -75,4 +74,48 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 	}
 
 	return true
+}
+
+func TestReturnStatements(t *testing.T) {
+	input := `
+		return 18000;
+		return "string";
+		return 20;
+	`
+	expectedStatements := 3
+
+	lexer := lexer.New(input)
+	parser := New(lexer)
+
+	program := parser.Parse()
+	if program == nil {
+		t.Fatalf("Program returned nil")
+	}
+
+	if len(program.Statements) != expectedStatements {
+		t.Fatalf("Program Statements produce = %d, expected = %d", len(program.Statements), expectedStatements)
+	}
+
+	// check parsing errors
+	errors := parser.Errors()
+	if len(errors) != 0 {
+		t.Errorf("Parser has %d associated error(s)", len(errors))
+		for _, message := range errors {
+			t.Errorf("Parser Error: %q", message)
+		}
+		t.FailNow() // immediate fail
+	}
+
+	for _, statement := range program.Statements {
+		log.Println(statement)
+		returnStatement, ok := statement.(*ast.ReturnStatement)
+		if !ok {
+			t.Errorf("statement is not *ast.ReturnStatement, got = %q", returnStatement)
+			continue
+		}
+
+		if returnStatement.Token.Literal != "return" {
+			t.Errorf("returnStatement.Token.Literal is not 'return', got = %q", returnStatement.Token.Literal)
+		}
+	}
 }

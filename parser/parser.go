@@ -66,8 +66,29 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.currentToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
+	case token.RETURN:
+		return p.parseReturnStatement()
 	default:
 		return nil
+	}
+}
+
+func (p *Parser) currentTokenIs(t token.TokenType) bool {
+	return p.currentToken.Type == t
+}
+
+func (p *Parser) peekTokenIs(t token.TokenType) bool {
+	return p.peekToken.Type == t
+}
+
+func (p *Parser) assertPeek(t token.TokenType) bool {
+	if p.peekTokenIs(t) {
+		// advance forward
+		p.next()
+		return true
+	} else {
+		p.AddError(fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type))
+		return false
 	}
 }
 
@@ -96,21 +117,16 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	return statement
 }
 
-func (p *Parser) currentTokenIs(t token.TokenType) bool {
-	return p.currentToken.Type == t
-}
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	statement := &ast.ReturnStatement{Token: p.currentToken}
 
-func (p *Parser) peekTokenIs(t token.TokenType) bool {
-	return p.peekToken.Type == t
-}
+	p.next()
 
-func (p *Parser) assertPeek(t token.TokenType) bool {
-	if p.peekTokenIs(t) {
-		// advance forward
+	// for now, skip until we find semicolon
+	// next time, we need to parse the Value (expression) statement
+	for !p.currentTokenIs(token.SEMICOLON) {
 		p.next()
-		return true
-	} else {
-		p.AddError(fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type))
-		return false
 	}
+
+	return statement
 }
