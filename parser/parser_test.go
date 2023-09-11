@@ -8,6 +8,8 @@ import (
 
 func TestLetStatements(t *testing.T) {
 	input := `
+		let x = 9;
+		let fa;
 		let firstNumber = 5;
 		let secondNumber = 15;
 		let sum = firstNumber + secondNumber;
@@ -23,8 +25,14 @@ func TestLetStatements(t *testing.T) {
 		t.Fatalf("Program returned nil")
 	}
 
-	if len(program.Statements) != 4 {
-		t.Fatalf("Program.Statements does not contains 4 statements. Got = %d", len(program.Statements))
+	// check parsing errors
+	errors := parser.Errors()
+	if len(errors) != 0 {
+		t.Errorf("Parser has %d associated error(s)", len(errors))
+		for _, message := range errors {
+			t.Errorf("Parser Error: %q", message)
+		}
+		t.FailNow() // immediate fail
 	}
 
 	tests := []struct {

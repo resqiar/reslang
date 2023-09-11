@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"reslang/ast"
 	"reslang/lexer"
 	"reslang/token"
@@ -10,11 +11,15 @@ type Parser struct {
 	lexer        *lexer.Lexer
 	currentToken token.Token
 	peekToken    token.Token
+
+	// error handling
+	errors []string
 }
 
 func New(l *lexer.Lexer) *Parser {
 	parser := &Parser{
-		lexer: l,
+		lexer:  l,
+		errors: []string{},
 	}
 
 	// read twice so both currentToken and peekToken is set
@@ -22,6 +27,14 @@ func New(l *lexer.Lexer) *Parser {
 	parser.next()
 
 	return parser
+}
+
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+func (p *Parser) AddError(message string) {
+	p.errors = append(p.errors, message)
 }
 
 func (p *Parser) next() {
@@ -96,6 +109,8 @@ func (p *Parser) assertPeek(t token.TokenType) bool {
 		// advance forward
 		p.next()
 		return true
+	} else {
+		p.AddError(fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type))
+		return false
 	}
-	return false
 }
